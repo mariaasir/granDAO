@@ -254,33 +254,34 @@ public class Controller {
 
     // Obtener todas las ciudades
     @GetMapping("/getCiudades")
-    public List<Ciudad> obtenerTodasLasCiudades() {
-        return service.obtenerTodasLasCiudades();
+    public ResponseEntity<List<Ciudad>> obtenerTodasLasCiudades() {
+        return ResponseEntity.ok(service.obtenerTodasLasCiudades());
     }
 
     // Obtener una ciudad por su ID
     @GetMapping("/getCiudadPorId/{id}")
-    public Ciudad obtenerCiudadPorId(@PathVariable String id) {
-        return service.obtenerCiudadPorId(id);
+    public ResponseEntity<Ciudad> obtenerCiudadPorId(@PathVariable String id) {
+        return ResponseEntity.ok(service.obtenerCiudadPorId(id));
     }
 
     // Crear una nueva ciudad
     @PostMapping("/guardarCiudad")
-    public Ciudad crearCiudad(@RequestBody Ciudad ciudad) {
-        return service.guardarCiudad(ciudad);
+    public ResponseEntity<Ciudad> crearCiudad(@RequestBody Ciudad ciudad) {
+        return ResponseEntity.ok(service.guardarCiudad(ciudad));
     }
 
     // Actualizar una ciudad existente
     @PutMapping("/actualizarCiudad/{id}")
-    public Ciudad actualizarCiudad(@PathVariable String id, @RequestBody Ciudad ciudad) {
+    public ResponseEntity<Ciudad> actualizarCiudad(@PathVariable String id, @RequestBody Ciudad ciudad) {
         ciudad.setId(id); // Asegurar que el ID coincida
-        return service.guardarCiudad(ciudad);
+        return ResponseEntity.ok().body(service.guardarCiudad(ciudad));
     }
 
     // Eliminar una ciudad por su ID
     @DeleteMapping("/eliminarCiudad/{id}")
-    public void eliminarCiudad(@PathVariable String id) {
+    public ResponseEntity<String> eliminarCiudad(@PathVariable String id) {
         service.eliminarCiudadPorId(id);
+        return ResponseEntity.ok("Ciudad " + id + " eliminado");
     }
 
 }
