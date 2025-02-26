@@ -16,4 +16,12 @@
         <nombre>juanito</nombre>
         <password>aaaBBBB1234*</password>
     </usuario>
+    <usuario>
+        <nombre>perezoso1</nombre>
+        <password>aBcD21*c</password>
+    </usuario>
+    <usuario>
+        <nombre>perezoso1</nombre>
+        <password>aBcD21*c</password>
+    </usuario>
 </usuariosList>

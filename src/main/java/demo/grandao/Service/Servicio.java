@@ -57,7 +57,7 @@ public class Servicio {
     }
 
     //Agrega un autor usando parámetros
-    public Autores addAutorParameters(String nombre, String nacionalidad) {
+    public Autores addAutorParameters(@Valid  String nombre, @Valid String nacionalidad) {
         Autores autor = new Autores();
         autor.setNombre(nombre);
         autor.setNacionalidad(nacionalidad);
@@ -65,7 +65,7 @@ public class Servicio {
     }
 
     //Actualiza los datos de un autor en la base de datos
-    public Autores updateAutor(Autores autor) {
+    public Autores updateAutor(@Valid Autores autor) {
         return repositorioAutores.save(autor);
     }
 
@@ -96,16 +96,16 @@ public class Servicio {
     }
 
     //Agrega un libro utilizando parámetros
-    public Libros addLibroParameters(String titulo, Integer anio, Integer autor_id) {
+    public Libros addLibroParameters(@Valid String titulo, @Valid Integer anio,@Valid Integer autor_id) {
         Libros libro = new Libros();
         libro.setTitulo(titulo);
         libro.setAnioPublicacion(anio);
-        libro.setAutor(getAutorById(autor_id)); // Obtener el autor por ID
+        libro.setAutor(getAutorById(autor_id)); // Obtener el libro por ID
         return repositorioLibros.save(libro);
     }
 
     //Actualiza un libro en la base de datos
-    public Libros updateLibro(Libros libro) {
+    public Libros updateLibro(@Valid Libros libro) {
         return repositorioLibros.save(libro);
     }
 
@@ -120,54 +120,39 @@ public class Servicio {
     // ==========================================================================
 
 
-    private static final String FILE_PATH = "usuarios.xml"; //Ruta al archivo XML donde se almacenan los usuarios
 
     public List<Usuarios> getUsuarios() {
         try {
-            return repositorioUsuarios.leerUsuarios(); // Llamada al método que lee los usuarios desde el XML
+            return repositorioUsuarios.leerUsuarios(); //Llama al método que lee los usuarios desde el XML
         } catch (JAXBException e) {
-            e.printStackTrace(); // Registrar el error para depuración
-            return new ArrayList<>(); // Devolver lista vacía si hay un error
+            e.printStackTrace();
+            return new ArrayList<>(); //Devuelve una lista vacía si hay un error
         }
     }
 
 
     //Obtiene un usuario por su nombre desde el archivo XML
     public Usuarios getUsuarioByName(String nombre) throws JAXBException {
-        //Obtiene la lista de usuarios
-        List<Usuarios> usuarios = getUsuarios();
-
-        //Busca el usuario con el nombre especificado
-        for (Usuarios usuario : usuarios) {
-            if (usuario.getNombre().equals(nombre)) {
-                return usuario;  //Devuelve el usuario encontrado
-            }
-        }
-
-        return null;  //Devuelve null si el usuario no existe
+        List<Usuarios> usuarios = repositorioUsuarios.leerUsuariosPorNombre(nombre);
+        return usuarios.isEmpty() ? null : usuarios.get(0);
     }
 
 
-    public void guardarUsuario(Usuarios usuario) throws JAXBException {
+    public void guardarUsuario(@Valid Usuarios usuario) throws JAXBException {
         List<Usuarios> usuarios = getUsuarios();  // Obtiene los usuarios existentes
 
-        // Si la lista de usuarios es null, inicializa una lista vacía
+        //Si la lista de usuarios es null, inicializa una lista vacía
         if (usuarios == null) {
             usuarios = new ArrayList<>();
         }
-
-        usuarios.add(usuario);  // Agrega el nuevo usuario a la lista
-
-        // Crea el wrapper para la lista de usuarios
-        UsuariosList wrapper = new UsuariosList(usuarios);
+        usuarios.add(usuario);  //Agrega el nuevo usuario a la lista
         repositorioUsuarios.guardarUsuarios(usuarios);
 
     }
 
 
     //Actualiza los datos de un usuario en el archivo XML
-    // Actualizar un usuario existente
-    public void actualizarUsuario(String nombre, Usuarios usuarioNuevo) throws JAXBException {
+    public void actualizarUsuario(@Valid String nombre, @Valid Usuarios usuarioNuevo) throws JAXBException {
         repositorioUsuarios.updateUsuario(nombre, usuarioNuevo);
     }
 

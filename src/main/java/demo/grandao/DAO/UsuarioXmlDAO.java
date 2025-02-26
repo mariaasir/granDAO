@@ -10,6 +10,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
  @Repository
@@ -31,6 +32,19 @@ public class UsuarioXmlDAO {
         return wrapper.getUsuarios();
     }
 
+    public List<Usuarios> leerUsuariosPorNombre(String nombre) throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(UsuariosList.class);
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        UsuariosList wrapper = (UsuariosList) unmarshaller.unmarshal(new File(ARCHIVO_XML));
+
+        List<Usuarios> usuariosFiltrados = new ArrayList<Usuarios>();
+        for (Usuarios usuario : wrapper.getUsuarios()) {
+            if (usuario.getNombre().equals(nombre)) {
+                usuariosFiltrados.add(usuario);
+            }
+        }
+        return usuariosFiltrados;
+    }
 
     // Actualizar un usuario en el XML
     public void updateUsuario(String nombre, Usuarios usuarioNuevo) throws JAXBException {
