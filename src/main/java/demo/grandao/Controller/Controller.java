@@ -1,6 +1,7 @@
 package demo.grandao.Controller;
 
 import demo.grandao.Modelo.Autores;
+import demo.grandao.Modelo.Coche;
 import demo.grandao.Modelo.Libros;
 import demo.grandao.Modelo.Usuarios;
 import demo.grandao.Service.Servicio;
@@ -13,8 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.bind.JAXBException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/granDAO")
@@ -219,4 +222,32 @@ public class Controller {
         String mensaje = "Usuario " + nombre + " eliminado"; //Muestra un mensaje de que el usuario se ha eliminado con exito
         return ResponseEntity.ok().body(mensaje);
     }
+
+
+    // ==========================================================================
+    //                             MÉTODOS PARA COCHES
+    // ==========================================================================
+
+    // Endpoint para guardar un nuevo coche
+    @PostMapping("/guardarCoche")
+    public ResponseEntity<String> guardarCoche(@RequestBody Coche coche) throws IOException, ClassNotFoundException {
+        service.insertarCoche(coche);
+        return ResponseEntity.ok("Coche añadido correctamente");
+    }
+
+    // Endpoint para leer un coche por matrícula
+    @GetMapping("/getCocheByMatricula/{matricula}")
+    public ResponseEntity<Coche> obtenerCochePorMatricula(@PathVariable String matricula) throws IOException, ClassNotFoundException {
+        Optional<Coche> coche = service.buscarCochePorMatricula(matricula);
+        return coche.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // Endpoint para leer todos los coches
+    @GetMapping("/getCoches")
+    public ResponseEntity<List<Coche>> obtenerCoches() throws IOException, ClassNotFoundException {
+        List<Coche> coches = service.obtenerCoches();
+        return ResponseEntity.ok(coches);
+    }
+
 }

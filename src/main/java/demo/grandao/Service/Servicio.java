@@ -1,37 +1,35 @@
 package demo.grandao.Service;
 
+import demo.grandao.DAO.CocheFileDAO;
 import demo.grandao.DAO.UsuarioXmlDAO;
-import demo.grandao.Modelo.Autores;
-import demo.grandao.Modelo.Libros;
-import demo.grandao.Modelo.Usuarios;
-import demo.grandao.Modelo.UsuariosList;
+import demo.grandao.Modelo.*;
 import demo.grandao.Repositories.AutorRepository;
 import demo.grandao.Repositories.LibroRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class Servicio {
     AutorRepository repositorioAutores;
     LibroRepository repositorioLibros;
     UsuarioXmlDAO repositorioUsuarios;
+    CocheFileDAO repositorioCoches;
 
     //Constructor de la clase Servicio, añade los repositorios de Autores y Libros
 
     @Autowired
-    public Servicio(AutorRepository repositorioAutores, LibroRepository repositorioLibros, UsuarioXmlDAO repositorioUsuarios) {
+    public Servicio(AutorRepository repositorioAutores, LibroRepository repositorioLibros, UsuarioXmlDAO repositorioUsuarios, CocheFileDAO repositorioCoches) {
         this.repositorioAutores = repositorioAutores;
         this.repositorioLibros = repositorioLibros;
         this.repositorioUsuarios = repositorioUsuarios;
+        this.repositorioCoches = repositorioCoches;
     }
 
     public Servicio() {
@@ -177,4 +175,28 @@ public class Servicio {
     public void deleteUsuario(String nombre) throws JAXBException {
         repositorioUsuarios.deleteUsuario(nombre);
     }
+
+
+    // ==========================================================================
+    //                             MÉTODOS PARA COCHES
+    // ==========================================================================
+
+
+
+    // Leer la lista de coches desde el fichero
+    public List<Coche> obtenerCoches() throws IOException, ClassNotFoundException {
+        return repositorioCoches.leerCoches();
+    }
+
+    // Añadir un coche a la lista existente
+    public void insertarCoche(Coche coche) throws IOException, ClassNotFoundException {
+        repositorioCoches.insertarCoche(coche);
+    }
+
+    // Buscar un coche por matrícula
+    public Optional<Coche> buscarCochePorMatricula(String matricula) throws IOException, ClassNotFoundException {
+        return repositorioCoches.buscarCochePorMatricula(matricula);
+    }
 }
+
+
