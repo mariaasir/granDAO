@@ -1,9 +1,6 @@
 package demo.grandao.Controller;
 
-import demo.grandao.Modelo.Autores;
-import demo.grandao.Modelo.Coche;
-import demo.grandao.Modelo.Libros;
-import demo.grandao.Modelo.Usuarios;
+import demo.grandao.Modelo.*;
 import demo.grandao.Service.Servicio;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -248,6 +245,42 @@ public class Controller {
     public ResponseEntity<List<Coche>> obtenerCoches() throws IOException, ClassNotFoundException {
         List<Coche> coches = service.obtenerCoches();
         return ResponseEntity.ok(coches);
+    }
+
+
+    // ==========================================================================
+    //                             MÉTODOS PARA CIUDADES
+    // ==========================================================================
+
+    // Obtener todas las ciudades
+    @GetMapping("/getCiudades")
+    public List<Ciudad> obtenerTodasLasCiudades() {
+        return service.obtenerTodasLasCiudades();
+    }
+
+    // Obtener una ciudad por su ID
+    @GetMapping("/getCiudadPorId/{id}")
+    public Ciudad obtenerCiudadPorId(@PathVariable String id) {
+        return service.obtenerCiudadPorId(id);
+    }
+
+    // Crear una nueva ciudad
+    @PostMapping("/guardarCiudad")
+    public Ciudad crearCiudad(@RequestBody Ciudad ciudad) {
+        return service.guardarCiudad(ciudad);
+    }
+
+    // Actualizar una ciudad existente
+    @PutMapping("/actualizarCiudad/{id}")
+    public Ciudad actualizarCiudad(@PathVariable String id, @RequestBody Ciudad ciudad) {
+        ciudad.setId(id); // Asegurar que el ID coincida
+        return service.guardarCiudad(ciudad);
+    }
+
+    // Eliminar una ciudad por su ID
+    @DeleteMapping("/eliminarCiudad/{id}")
+    public void eliminarCiudad(@PathVariable String id) {
+        service.eliminarCiudadPorId(id);
     }
 
 }
