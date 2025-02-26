@@ -1,0 +1,18 @@
+[{
+  "_id": {
+    "$oid": "67bf8377c1294b3e6155d135"
+  },
+  "nombre": "Getafe",
+  "numeroHabitantes": 180000,
+  "pais": "España",
+  "_class": "demo.grandao.Modelo.Ciudad"
+},
+{
+  "_id": {
+    "$oid": "67bf87289ffbab2bbd5e1cf2"
+  },
+  "nombre": "Buenos Aires",
+  "numeroHabitantes": 3121000,
+  "pais": "Argentina",
+  "_class": "demo.grandao.Modelo.Ciudad"
+}]
