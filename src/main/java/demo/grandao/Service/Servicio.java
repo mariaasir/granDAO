@@ -1,5 +1,6 @@
 package demo.grandao.Service;
 
+import demo.grandao.DAO.UsuarioXmlDAO;
 import demo.grandao.Modelo.Autores;
 import demo.grandao.Modelo.Libros;
 import demo.grandao.Modelo.Usuarios;
@@ -22,17 +23,19 @@ import java.util.List;
 public class Servicio {
     AutorRepository repositorioAutores;
     LibroRepository repositorioLibros;
+    UsuarioXmlDAO repositorioUsuarios;
 
     //Constructor de la clase Servicio, añade los repositorios de Autores y Libros
+
     @Autowired
-    public Servicio(AutorRepository repositorioAutores, LibroRepository repositorioLibros) {
+    public Servicio(AutorRepository repositorioAutores, LibroRepository repositorioLibros, UsuarioXmlDAO repositorioUsuarios) {
         this.repositorioAutores = repositorioAutores;
         this.repositorioLibros = repositorioLibros;
+        this.repositorioUsuarios = repositorioUsuarios;
     }
 
     public Servicio() {
     }
-
 
 
     // ==========================================================================
@@ -72,7 +75,6 @@ public class Servicio {
     public void deleteAutor(int id) {
         repositorioAutores.deleteById(id);
     }
-
 
 
     // ==========================================================================
@@ -115,7 +117,6 @@ public class Servicio {
     }
 
 
-
     // ==========================================================================
     //                    MÉTODOS PARA USUARIOS EN FICHEROS XML
     // ==========================================================================
@@ -125,20 +126,10 @@ public class Servicio {
 
     public List<Usuarios> getUsuarios() {
         try {
-            // Si el archivo no existe, retorna una lista vacía
-            File file = new File(FILE_PATH);
-            if (!file.exists()) {
-                return new ArrayList<>();
-            }
-
-            // Si el archivo existe, lee y deserializa la lista de usuarios desde el archivo XML
-            JAXBContext context = JAXBContext.newInstance(UsuariosList.class);
-            Unmarshaller unmarshaller = context.createUnmarshaller();
-            UsuariosList usuariosList = (UsuariosList) unmarshaller.unmarshal(file);
-            return usuariosList.getUsuarios(); // Devuelve la lista de usuarios deserializada
+            return repositorioUsuarios.leerUsuarios(); // Llamada al método que lee los usuarios desde el XML
         } catch (JAXBException e) {
-            e.printStackTrace();
-            return new ArrayList<>(); // Si hay un error, retorna una lista vacía
+            e.printStackTrace(); // Registrar el error para depuración
+            return new ArrayList<>(); // Devolver lista vacía si hay un error
         }
     }
 
@@ -171,56 +162,19 @@ public class Servicio {
 
         // Crea el wrapper para la lista de usuarios
         UsuariosList wrapper = new UsuariosList(usuarios);
+        repositorioUsuarios.guardarUsuarios(usuarios);
 
-        // Serializa la lista de usuarios y la escribe en el archivo XML
-        JAXBContext context = JAXBContext.newInstance(UsuariosList.class);
-        Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.marshal(wrapper, new File(FILE_PATH)); // Guarda los cambios en XML
     }
 
 
     //Actualiza los datos de un usuario en el archivo XML
+    // Actualizar un usuario existente
     public void actualizarUsuario(String nombre, Usuarios usuarioNuevo) throws JAXBException {
-        List<Usuarios> usuarios = getUsuarios();  //Obtiene la lista de usuarios
-
-        //Busca el usuario con el nombre especificado
-        for (Usuarios usuario : usuarios) {
-            if (usuario.getNombre().equals(nombre)) {
-                //Actualiza los datos del usuario
-                usuario.setNombre(usuarioNuevo.getNombre());
-                usuario.setPassword(usuarioNuevo.getPassword());
-                break;
-            }
-        }
-
-        //Crea el wrapper con la lista actualizada de usuarios
-        UsuariosList wrapper = new UsuariosList(usuarios);
-
-        //Serializa y guarda la lista actualizada en el archivo XML
-        JAXBContext context = JAXBContext.newInstance(UsuariosList.class);
-        Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.marshal(wrapper, new File(FILE_PATH)); //Guarda los cambios en XML
+        repositorioUsuarios.updateUsuario(nombre, usuarioNuevo);
     }
 
-    //Elimina un usuario del archivo XML
+    // Eliminar un usuario
     public void deleteUsuario(String nombre) throws JAXBException {
-        List<Usuarios> usuarios = getUsuarios();  //Obtiene la lista de usuarios desde el archivo XML
-
-        //Busca el usuario con el nombre especificado
-        for (Usuarios usuario : usuarios) {
-            if (usuario.getNombre().equals(nombre)) {
-                usuarios.remove(usuario);  //Elimina el usuario encontrado
-                break;
-            }
-        }
-
-        //Escribe la lista actualizada en el archivo XML
-        UsuariosList wrapper = new UsuariosList(usuarios);
-        JAXBContext context = JAXBContext.newInstance(UsuariosList.class);
-        Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.marshal(wrapper, new File(FILE_PATH));  //Guarda los cambios en XML
+        repositorioUsuarios.deleteUsuario(nombre);
     }
 }
