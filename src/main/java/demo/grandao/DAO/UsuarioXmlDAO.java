@@ -54,7 +54,7 @@ public class UsuarioXmlDAO {
             if (usuario.getNombre().equals(nombre)) {
                 usuario.setNombre(usuarioNuevo.getNombre());
                 usuario.setPassword(usuarioNuevo.getPassword());
-                guardarUsuarios(usuarios); // Guarda la lista actualizada
+                guardarUsuarios(usuarios); //Guarda la lista actualizada
                 return;
             }
         }
@@ -62,10 +62,8 @@ public class UsuarioXmlDAO {
 
     public void deleteUsuario(String nombre) throws JAXBException {
         List<Usuarios> usuarios = leerUsuarios();
-
         usuarios.removeIf(usuario -> usuario.getNombre().equals(nombre));
-
-        guardarUsuarios(usuarios); // Guarda la lista actualizada
+        guardarUsuarios(usuarios); //Guarda la lista actualizada
     }
 
 

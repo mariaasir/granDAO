@@ -62,8 +62,8 @@ public class Controller {
     //POST con Form Normal
     @PostMapping(value = "/autorForm", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Autores> addAutorForm(
-            @RequestParam String nombre,  //Recibe el nombre del autor como parámetro del formulario
-            @RequestParam String nacionalidad //Recibe la nacionalidad del autor como parámetro del formulario
+            @RequestParam @Valid String nombre,  //Recibe el nombre del autor como parámetro del formulario
+            @RequestParam @Valid String nacionalidad //Recibe la nacionalidad del autor como parámetro del formulario
     ) {
         //Llama al Service para agregar un nuevo autor con los parámetros recibidos del formulario
         return ResponseEntity.created(null).body(service.addAutorParameters(nombre, nacionalidad)); //Devuelve el Objeto del autor creado
@@ -72,7 +72,7 @@ public class Controller {
 
     //PUT AUTOR --> UPDATE OBJETO AUTOR
     @PutMapping("/updateAutor/{id}")
-    public ResponseEntity<Autores> updateAutor(@PathVariable int id, @RequestBody Autores autor) {
+    public ResponseEntity<Autores> updateAutor(@PathVariable @Valid int id, @RequestBody @Valid Autores autor) {
         Autores autorExistente = service.getAutorById(id);         //Busca al autor por su ID
         if (autorExistente == null) {
             return ResponseEntity.notFound().build(); // Si el autor no existe, devuelve un error NOT FOUND
@@ -127,9 +127,9 @@ public class Controller {
     //POST DE UN OBJETO LIBRO POR PARÁMETROS
     @PostMapping(value = "/libroForm", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Libros> addLibroForm(
-            @RequestParam String titulo,   //Recibe el título del libro como parámetro del formulario
-            @RequestParam Integer anio,    //Recibe el año de publicacion del libro como parámetro del formulario
-            @RequestParam Integer autor_id  //Recibe el ID del autor del libro como parámetro del formulario
+            @RequestParam @Valid String titulo,   //Recibe el título del libro como parámetro del formulario
+            @RequestParam @Valid Integer anio,    //Recibe el año de publicacion del libro como parámetro del formulario
+            @RequestParam @Valid Integer autor_id  //Recibe el ID del autor del libro como parámetro del formulario
     ) {
         //Llama al Service para agregar un nuevo libro con los parámetros recibidos del formulario
         return ResponseEntity.created(null).body(service.addLibroParameters(titulo, anio, autor_id));   //Devuelve el Objeto del libro creado
@@ -137,7 +137,7 @@ public class Controller {
 
     //PUT LIBRO --> UPDATE OBJETO LIBRO
     @PutMapping("/updateLibro/{id}")
-    public ResponseEntity<Libros> updateLibro(@PathVariable int id, @RequestBody Libros libro) {
+    public ResponseEntity<Libros> updateLibro(@PathVariable @Valid int id, @RequestBody @Valid Libros libro) {
         Libros libroExistente = service.getLibroById(id);         //Busca si el libro existe por su ID
         if (libroExistente == null) {
             return ResponseEntity.notFound().build(); // Si el libro no existe, devuelve un error NOT FOUND
@@ -195,7 +195,7 @@ public class Controller {
 
     //PUT USUARIO --> UPDATE OBJETO USUARIO
     @PutMapping("/updateUsuario/{nombre}")
-    public ResponseEntity<Usuarios> actualizarUsuario(@PathVariable String nombre, @RequestBody Usuarios usuario) throws JAXBException {
+    public ResponseEntity<Usuarios> actualizarUsuario(@PathVariable @Valid String nombre, @RequestBody @Valid Usuarios usuario) throws JAXBException {
         Usuarios usuarioExistente = service.getUsuarioByName(nombre);   //Busca si el usuario existe por su nombre
         if (usuarioExistente == null) {
             return ResponseEntity.notFound().build();           // Si el usuario no existe, devuelve un error NOT FOUND
@@ -221,26 +221,27 @@ public class Controller {
     }
 
 
+
+
     // ==========================================================================
     //                             MÉTODOS PARA COCHES
     // ==========================================================================
 
-    // Endpoint para guardar un nuevo coche
-    @PostMapping("/guardarCoche")
+
+    //Endpoint para guardar un nuevo coche
+    @PostMapping("/postCoche")
     public ResponseEntity<String> guardarCoche(@RequestBody Coche coche) throws IOException, ClassNotFoundException {
         service.insertarCoche(coche);
         return ResponseEntity.ok("Coche añadido correctamente");
     }
 
-    // Endpoint para leer un coche por matrícula
+    //Endpoint para leer un coche por matrícula
     @GetMapping("/getCocheByMatricula/{matricula}")
     public ResponseEntity<Coche> obtenerCochePorMatricula(@PathVariable String matricula) throws IOException, ClassNotFoundException {
-        Optional<Coche> coche = service.buscarCochePorMatricula(matricula);
-        return coche.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(service.buscarCochePorMatricula(matricula));
     }
 
-    // Endpoint para leer todos los coches
+    //Endpoint para leer todos los coches
     @GetMapping("/getCoches")
     public ResponseEntity<List<Coche>> obtenerCoches() throws IOException, ClassNotFoundException {
         List<Coche> coches = service.obtenerCoches();
@@ -252,36 +253,36 @@ public class Controller {
     //                             MÉTODOS PARA CIUDADES
     // ==========================================================================
 
-    // Obtener todas las ciudades
+    //Obtener todas las ciudades
     @GetMapping("/getCiudades")
     public ResponseEntity<List<Ciudad>> obtenerTodasLasCiudades() {
         return ResponseEntity.ok(service.obtenerTodasLasCiudades());
     }
 
-    // Obtener una ciudad por su ID
+    //Obtener una ciudad por su ID
     @GetMapping("/getCiudadPorId/{id}")
     public ResponseEntity<Ciudad> obtenerCiudadPorId(@PathVariable String id) {
         return ResponseEntity.ok(service.obtenerCiudadPorId(id));
     }
 
-    // Crear una nueva ciudad
-    @PostMapping("/guardarCiudad")
+    //Crear una nueva ciudad
+    @PostMapping("/postCiudad")
     public ResponseEntity<Ciudad> crearCiudad(@RequestBody Ciudad ciudad) {
         return ResponseEntity.ok(service.guardarCiudad(ciudad));
     }
 
-    // Actualizar una ciudad existente
-    @PutMapping("/actualizarCiudad/{id}")
+    //Actualizar una ciudad existente
+    @PutMapping("/updateCiudad/{id}")
     public ResponseEntity<Ciudad> actualizarCiudad(@PathVariable String id, @RequestBody Ciudad ciudad) {
         ciudad.setId(id); // Asegurar que el ID coincida
         return ResponseEntity.ok().body(service.guardarCiudad(ciudad));
     }
 
-    // Eliminar una ciudad por su ID
-    @DeleteMapping("/eliminarCiudad/{id}")
+    //Eliminar una ciudad por su ID
+    @DeleteMapping("/deleteCiudad/{id}")
     public ResponseEntity<String> eliminarCiudad(@PathVariable String id) {
         service.eliminarCiudadPorId(id);
-        return ResponseEntity.ok("Ciudad " + id + " eliminado");
+        return ResponseEntity.ok("Ciudad con ID: " + id + " eliminada");
     }
 
 }

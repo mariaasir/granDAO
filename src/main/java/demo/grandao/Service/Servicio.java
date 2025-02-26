@@ -14,7 +14,6 @@ import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class Servicio {
@@ -149,6 +148,7 @@ public class Servicio {
         if (usuarios == null) {
             usuarios = new ArrayList<>();
         }
+
         usuarios.add(usuario);  //Agrega el nuevo usuario a la lista
         repositorioUsuarios.guardarUsuarios(usuarios);
 
@@ -183,7 +183,7 @@ public class Servicio {
     }
 
     // Buscar un coche por matrícula
-    public Optional<Coche> buscarCochePorMatricula(String matricula) throws IOException, ClassNotFoundException {
+    public Coche buscarCochePorMatricula(String matricula) throws IOException, ClassNotFoundException {
         return repositorioCoches.buscarCochePorMatricula(matricula);
     }
 
@@ -191,22 +191,22 @@ public class Servicio {
     //                             MÉTODOS PARA CIUDADES EN MONGODB
     // ==========================================================================
 
-    // Obtener todas las ciudades
+    //Obtener todas las ciudades
     public List<Ciudad> obtenerTodasLasCiudades() {
         return repositorioCiudades.findAll();
     }
 
-    // Obtener una ciudad por su ID
+    //Obtener una ciudad por su ID
     public Ciudad obtenerCiudadPorId(String id) {
         return repositorioCiudades.findById(id).orElse(null);
     }
 
-    // Guardar una ciudad (crear o actualizar)
+    //Guardar una ciudad (crear o actualizar)
     public Ciudad guardarCiudad(Ciudad ciudad) {
         return repositorioCiudades.save(ciudad);
     }
 
-    // Eliminar una ciudad por su ID
+    //Eliminar una ciudad por su ID
     public void eliminarCiudadPorId(String id) {
         repositorioCiudades.deleteById(id);
     }
