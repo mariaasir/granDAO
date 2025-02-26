@@ -4,6 +4,7 @@ import demo.grandao.DAO.CocheFileDAO;
 import demo.grandao.DAO.UsuarioXmlDAO;
 import demo.grandao.Modelo.*;
 import demo.grandao.Repositories.AutorRepository;
+import demo.grandao.Repositories.CiudadRepository;
 import demo.grandao.Repositories.LibroRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +22,18 @@ public class Servicio {
     LibroRepository repositorioLibros;
     UsuarioXmlDAO repositorioUsuarios;
     CocheFileDAO repositorioCoches;
+    CiudadRepository repositorioCiudades;
 
     //Constructor de la clase Servicio, añade los repositorios de Autores y Libros
 
     @Autowired
-    public Servicio(AutorRepository repositorioAutores, LibroRepository repositorioLibros, UsuarioXmlDAO repositorioUsuarios, CocheFileDAO repositorioCoches) {
+    public Servicio(AutorRepository repositorioAutores, LibroRepository repositorioLibros, UsuarioXmlDAO repositorioUsuarios,
+                    CocheFileDAO repositorioCoches, CiudadRepository repositorioCiudades) {
         this.repositorioAutores = repositorioAutores;
         this.repositorioLibros = repositorioLibros;
         this.repositorioUsuarios = repositorioUsuarios;
         this.repositorioCoches = repositorioCoches;
+        this.repositorioCiudades = repositorioCiudades;
     }
 
     public Servicio() {
@@ -37,7 +41,7 @@ public class Servicio {
 
 
     // ==========================================================================
-    //                             MÉTODOS PARA AUTORES
+    //                             MÉTODOS PARA AUTORES EN SQL
     // ==========================================================================
 
 
@@ -76,7 +80,7 @@ public class Servicio {
 
 
     // ==========================================================================
-    //                             MÉTODOS PARA LIBROS
+    //                             MÉTODOS PARA LIBROS EN SQL
     // ==========================================================================
 
 
@@ -163,7 +167,7 @@ public class Servicio {
 
 
     // ==========================================================================
-    //                             MÉTODOS PARA COCHES
+    //                             MÉTODOS PARA COCHES EN FILES
     // ==========================================================================
 
 
@@ -182,6 +186,31 @@ public class Servicio {
     public Optional<Coche> buscarCochePorMatricula(String matricula) throws IOException, ClassNotFoundException {
         return repositorioCoches.buscarCochePorMatricula(matricula);
     }
+
+    // ==========================================================================
+    //                             MÉTODOS PARA CIUDADES EN MONGODB
+    // ==========================================================================
+
+    // Obtener todas las ciudades
+    public List<Ciudad> obtenerTodasLasCiudades() {
+        return repositorioCiudades.findAll();
+    }
+
+    // Obtener una ciudad por su ID
+    public Ciudad obtenerCiudadPorId(String id) {
+        return repositorioCiudades.findById(id).orElse(null);
+    }
+
+    // Guardar una ciudad (crear o actualizar)
+    public Ciudad guardarCiudad(Ciudad ciudad) {
+        return repositorioCiudades.save(ciudad);
+    }
+
+    // Eliminar una ciudad por su ID
+    public void eliminarCiudadPorId(String id) {
+        repositorioCiudades.deleteById(id);
+    }
+
 }
 
 
