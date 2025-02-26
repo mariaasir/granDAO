@@ -2,12 +2,13 @@ package demo.grandao.Modelo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import java.time.Year;
 
 @Getter
 @Setter
@@ -15,16 +16,20 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(name = "libros")
 
 public class Libros {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
     @Size(max = 150)
-    @NotNull
+    @NotBlank(message = "El título no puede estar vacío")
+    @Pattern(regexp = "^[a-zA-Z0-9À-ÿ\\s.,'-]+$", message = "El título contiene caracteres no permitidos")
     @Column(name = "titulo", nullable = false, length = 150)
     private String titulo;
 
+    @Min(value = 1000, message = "El año de publicación debe ser válido")
+    @Max(value = Year.MAX_VALUE, message = "El año de publicación no puede ser superior al actual")
     @Column(name = "anio_publicacion")
     private Integer anioPublicacion;
 
@@ -35,7 +40,7 @@ public class Libros {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Autores autor;
 
-    public Libros( String titulo, Integer anioPublicacion, Autores autor) {
+    public Libros(String titulo, Integer anioPublicacion, Autores autor) {
         this.titulo = titulo;
         this.anioPublicacion = anioPublicacion;
         this.autor = autor;

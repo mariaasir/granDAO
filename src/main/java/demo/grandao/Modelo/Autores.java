@@ -1,7 +1,9 @@
 package demo.grandao.Modelo;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,13 +19,15 @@ public class Autores {
     private Integer id;
 
     @Size(max = 100)
-    @NotNull
+    @NotBlank(message = "El nombre no puede estar vacío")
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
 
     @Size(max = 50)
+    @Pattern(regexp = "^[a-zA-ZÀ-ÿ\\s]*$", message = "La nacionalidad solo puede contener letras y espacios")
     @Column(name = "nacionalidad", length = 50)
     private String nacionalidad;
+
 
     public Autores() {
     }

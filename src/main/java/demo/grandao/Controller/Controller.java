@@ -186,7 +186,7 @@ public class Controller {
 
     //POST DE UN OBJETO USUARIO
     @PostMapping("/postUsuario")
-    public ResponseEntity<Usuarios> postUsuario(@RequestBody Usuarios usuario) throws JAXBException {
+    public ResponseEntity<Usuarios> postUsuario(@RequestBody @Valid Usuarios usuario) throws JAXBException {
         //Llama al Service para agregar un nuevo usuario al fichero XML
         service.guardarUsuario(usuario);
         return ResponseEntity.ok(usuario);  //Devuelve el Objeto del usuario creado

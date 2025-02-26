@@ -123,18 +123,23 @@ public class Servicio {
 
     private static final String FILE_PATH = "usuarios.xml"; //Ruta al archivo XML donde se almacenan los usuarios
 
-    // Obtiene la lista de usuarios desde el archivo XML
-    public List<Usuarios> getUsuarios() throws JAXBException {
-        File file = new File(FILE_PATH);
-        if (!file.exists()) {
-            return new ArrayList<>(); //Si no existe el archivo XML, devuelve una lista vacía
+    public List<Usuarios> getUsuarios() {
+        try {
+            // Si el archivo no existe, retorna una lista vacía
+            File file = new File(FILE_PATH);
+            if (!file.exists()) {
+                return new ArrayList<>();
+            }
+
+            // Si el archivo existe, lee y deserializa la lista de usuarios desde el archivo XML
+            JAXBContext context = JAXBContext.newInstance(UsuariosList.class);
+            Unmarshaller unmarshaller = context.createUnmarshaller();
+            UsuariosList usuariosList = (UsuariosList) unmarshaller.unmarshal(file);
+            return usuariosList.getUsuarios(); // Devuelve la lista de usuarios deserializada
+        } catch (JAXBException e) {
+            e.printStackTrace();
+            return new ArrayList<>(); // Si hay un error, retorna una lista vacía
         }
-
-        JAXBContext context = JAXBContext.newInstance(UsuariosList.class);
-        Unmarshaller unmarshaller = context.createUnmarshaller();
-        UsuariosList wrapper = (UsuariosList) unmarshaller.unmarshal(file); //Deserializa el XML
-
-        return wrapper.getUsuarios(); //Devuelve la lista de usuarios
     }
 
 
@@ -154,21 +159,26 @@ public class Servicio {
     }
 
 
-    //Guarda un nuevo usuario en el archivo XML
     public void guardarUsuario(Usuarios usuario) throws JAXBException {
-        List<Usuarios> usuarios = getUsuarios();  //Obtiene los usuarios existentes
+        List<Usuarios> usuarios = getUsuarios();  // Obtiene los usuarios existentes
 
-        usuarios.add(usuario);  //Agrega el nuevo usuario
+        // Si la lista de usuarios es null, inicializa una lista vacía
+        if (usuarios == null) {
+            usuarios = new ArrayList<>();
+        }
 
-        //Crea el wrapper para la lista de usuarios
+        usuarios.add(usuario);  // Agrega el nuevo usuario a la lista
+
+        // Crea el wrapper para la lista de usuarios
         UsuariosList wrapper = new UsuariosList(usuarios);
 
-        //Serializa la lista de usuarios y la escribe en el archivo XML
+        // Serializa la lista de usuarios y la escribe en el archivo XML
         JAXBContext context = JAXBContext.newInstance(UsuariosList.class);
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.marshal(wrapper, new File(FILE_PATH)); //Guarda los cambios en XML
+        marshaller.marshal(wrapper, new File(FILE_PATH)); // Guarda los cambios en XML
     }
+
 
     //Actualiza los datos de un usuario en el archivo XML
     public void actualizarUsuario(String nombre, Usuarios usuarioNuevo) throws JAXBException {
